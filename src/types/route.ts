@@ -1,26 +1,37 @@
 export interface Location {
   id: string;
   name: string;
-  lat: number;  // Real-world latitude from OSM Nominatim
-  lon: number;  // Real-world longitude from OSM Nominatim
-  x: number;    // Normalized 0-100 canvas coordinate fallback
-  y: number;    // Normalized 0-100 canvas coordinate fallback
+  lat: number;
+  lon: number;
+  x: number;
+  y: number;
   category?: 'landmark' | 'fort' | 'palace' | 'temple' | 'nature' | 'custom';
   formattedAddress?: string;
 }
 
+export interface CandidateRoute {
+  id: 'candidate_random' | 'candidate_greedy' | 'candidate_ga';
+  title: string;
+  strategy: string;
+  route: Location[];
+  totalDistance: number;
+  fitnessScore: number;
+  isSelectedBest: boolean;
+  explanation: string;
+}
+
 export interface Chromosome {
-  genes: string[]; // Ordered list of destination IDs (excluding start)
-  fitness: number; // 1 / totalDistance
-  totalDistance: number; // Distance in kilometers
+  genes: string[];
+  fitness: number;
+  totalDistance: number;
 }
 
 export interface GAConfig {
-  populationSize: number; // e.g. 100
-  generations: number;    // e.g. 100
-  tournamentSize: number; // e.g. 5
-  mutationRate: number;   // e.g. 0.05
-  eliteCount: number;     // e.g. 5
+  populationSize: number;
+  generations: number;
+  tournamentSize: number;
+  mutationRate: number;
+  eliteCount: number;
 }
 
 export interface GenerationStat {
@@ -39,6 +50,7 @@ export interface GAResult {
   fitnessHistory: GenerationStat[];
   heuristicDistance: number;
   heuristicRoute: Location[];
+  candidates: CandidateRoute[];
   improvementPercentage: number;
   executionTimeMs: number;
   chromosomeCount: number;

@@ -6,7 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import { PlannerForm } from '@/components/PlannerForm';
 import { RouteResult } from '@/components/RouteResult';
 import { OSMMap } from '@/components/OSMMap';
-import { AlgorithmStats } from '@/components/AlgorithmStats';
+import { CandidateComparisonView } from '@/components/CandidateComparisonView';
 import { Location, GAResult, OptimizeRequest, OptimizeResponse } from '@/types/route';
 
 export default function PlannerPage() {
@@ -94,7 +94,7 @@ export default function PlannerPage() {
           </div>
         )}
 
-        {/* Input Form Section with Autocomplete */}
+        {/* Input Form Section */}
         <section id="input-form">
           <PlannerForm onOptimize={handleOptimize} isLoading={isLoading} />
         </section>
@@ -109,8 +109,8 @@ export default function PlannerPage() {
               {/* 2. Keyless OpenStreetMap Leaflet Map */}
               <OSMMap result={gaResult} allLocations={allLocations} />
 
-              {/* 3. Genetic Convergence Chart */}
-              <AlgorithmStats result={gaResult} />
+              {/* 3. Candidate Route Evaluation & Decision Selection Matrix */}
+              <CandidateComparisonView result={gaResult} />
             </section>
           )}
         </div>
