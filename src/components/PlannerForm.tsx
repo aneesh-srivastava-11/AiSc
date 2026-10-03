@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Plus, Trash2, MapPin, Play, Sparkles } from 'lucide-react';
 import { GAConfig, OptimizeRequest } from '@/types/route';
+import { LocationAutocomplete } from './LocationAutocomplete';
 
 interface PlannerFormProps {
   onOptimize: (request: OptimizeRequest) => void;
@@ -21,11 +22,11 @@ const JAIPUR_PRESET = {
 };
 
 export const PlannerForm: React.FC<PlannerFormProps> = ({ onOptimize, isLoading }) => {
-  // Default state is EMPTY as requested
+  // Default state is EMPTY
   const [startLocation, setStartLocation] = useState<string>('');
   const [destinations, setDestinations] = useState<string[]>(['', '']);
 
-  // Fixed optimal GA configuration (tuning controls removed from UI)
+  // Fixed optimal GA configuration
   const fixedConfig: GAConfig = {
     populationSize: 100,
     generations: 100,
@@ -79,11 +80,11 @@ export const PlannerForm: React.FC<PlannerFormProps> = ({ onOptimize, isLoading 
             <h2 className="text-lg font-bold text-zinc-100">Travel Itinerary Configuration</h2>
           </div>
           <p className="text-xs text-zinc-400 mt-0.5">
-            Enter starting origin location and destinations to calculate the optimal travel route.
+            Type location names below to select live OpenStreetMap autocomplete suggestions.
           </p>
         </div>
 
-        {/* Optional Sample Data Fill */}
+        {/* Sample Data Fill */}
         <button
           type="button"
           onClick={handleFillSample}
@@ -95,25 +96,20 @@ export const PlannerForm: React.FC<PlannerFormProps> = ({ onOptimize, isLoading 
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Starting Location */}
+        {/* Starting Location Autocomplete */}
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-300 mb-2">
             Starting Location (Origin)
           </label>
-          <div className="relative">
-            <input
-              type="text"
-              required
-              value={startLocation}
-              onChange={e => setStartLocation(e.target.value)}
-              placeholder="e.g. Jaipur"
-              className="w-full bg-zinc-900/90 text-zinc-100 placeholder-zinc-500 rounded-xl px-4 py-3 text-sm border border-zinc-800 focus:border-sky-500 focus:ring-1 focus:ring-sky-500 outline-none transition-all pl-10"
-            />
-            <MapPin className="w-4 h-4 text-zinc-500 absolute left-3.5 top-3.5" />
-          </div>
+          <LocationAutocomplete
+            required
+            value={startLocation}
+            onChange={setStartLocation}
+            placeholder="Search starting location (e.g. Jaipur)"
+          />
         </div>
 
-        {/* Destination List */}
+        {/* Destination Autocomplete List */}
         <div>
           <div className="flex items-center justify-between mb-2">
             <label className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
@@ -128,19 +124,21 @@ export const PlannerForm: React.FC<PlannerFormProps> = ({ onOptimize, isLoading 
                 <span className="w-6 h-6 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 font-mono text-xs flex items-center justify-center shrink-0">
                   {index + 1}
                 </span>
-                <input
-                  type="text"
-                  required
-                  value={dest}
-                  onChange={e => handleDestinationChange(index, e.target.value)}
-                  placeholder={`Destination ${index + 1}`}
-                  className="flex-1 bg-zinc-900/60 text-zinc-200 placeholder-zinc-500 rounded-xl px-3.5 py-2.5 text-sm border border-zinc-800/80 focus:border-sky-500 focus:ring-1 focus:ring-sky-500 outline-none transition-all"
-                />
+
+                <div className="flex-1">
+                  <LocationAutocomplete
+                    required
+                    value={dest}
+                    onChange={val => handleDestinationChange(index, val)}
+                    placeholder={`Search destination ${index + 1}`}
+                  />
+                </div>
+
                 {destinations.length > 2 && (
                   <button
                     type="button"
                     onClick={() => handleRemoveDestination(index)}
-                    className="p-2 text-zinc-500 hover:text-rose-400 hover:bg-rose-950/20 rounded-lg transition-colors cursor-pointer"
+                    className="p-2 text-zinc-500 hover:text-rose-400 hover:bg-rose-950/20 rounded-lg transition-colors cursor-pointer shrink-0"
                     title="Remove destination"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -157,7 +155,7 @@ export const PlannerForm: React.FC<PlannerFormProps> = ({ onOptimize, isLoading 
               className="mt-3 text-xs font-medium text-sky-400 hover:text-sky-300 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-zinc-700 transition-all cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
-              Add Destination
+              Add Destination Node
             </button>
           )}
         </div>

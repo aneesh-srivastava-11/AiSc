@@ -2,13 +2,11 @@
 
 import React, { useState, useRef } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Cpu, Compass, Layers } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { PlannerForm } from '@/components/PlannerForm';
 import { RouteResult } from '@/components/RouteResult';
 import { OSMMap } from '@/components/OSMMap';
 import { AlgorithmStats } from '@/components/AlgorithmStats';
-import { AlgorithmExplainer } from '@/components/AlgorithmExplainer';
-import { TechnicalSpecsView } from '@/components/TechnicalSpecsView';
 import { Location, GAResult, OptimizeRequest, OptimizeResponse } from '@/types/route';
 
 export default function PlannerPage() {
@@ -73,21 +71,6 @@ export default function PlannerPage() {
               </span>
             </div>
           </div>
-
-          <div className="flex items-center gap-2 text-xs">
-            <a
-              href="#explainer"
-              className="px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 transition-colors"
-            >
-              Architecture
-            </a>
-            <a
-              href="#specs"
-              className="px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 transition-colors"
-            >
-              Technical Specs
-            </a>
-          </div>
         </div>
       </header>
 
@@ -111,7 +94,7 @@ export default function PlannerPage() {
           </div>
         )}
 
-        {/* Input Form Section (Defaults to EMPTY inputs) */}
+        {/* Input Form Section with Autocomplete */}
         <section id="input-form">
           <PlannerForm onOptimize={handleOptimize} isLoading={isLoading} />
         </section>
@@ -123,7 +106,7 @@ export default function PlannerPage() {
               {/* 1. Route Result Bento */}
               <RouteResult result={gaResult} />
 
-              {/* 2. Interactive OpenStreetMap Leaflet Map */}
+              {/* 2. Keyless OpenStreetMap Leaflet Map */}
               <OSMMap result={gaResult} allLocations={allLocations} />
 
               {/* 3. Genetic Convergence Chart */}
@@ -131,21 +114,12 @@ export default function PlannerPage() {
             </section>
           )}
         </div>
-
-        {/* Technical Explainer & System Specifications Sections */}
-        <section id="explainer">
-          <AlgorithmExplainer />
-        </section>
-
-        <section id="specs">
-          <TechnicalSpecsView />
-        </section>
       </main>
 
-      {/* Compact Clean Footer (No huge empty gaps) */}
+      {/* Compact Clean Footer */}
       <footer className="w-full border-t border-zinc-800/60 py-4 text-center text-xs text-zinc-500 bg-[#09090B]">
         <div className="max-w-7xl mx-auto px-4">
-          <p>Ai-ternary • AI Travel Route Optimization Platform • Powered by OpenStreetMap</p>
+          <p>Ai-ternary • AI Travel Route Optimization Engine • Powered by OpenStreetMap</p>
         </div>
       </footer>
     </div>
