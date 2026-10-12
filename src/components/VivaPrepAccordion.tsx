@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { HelpCircle, ChevronDown, ChevronUp, GraduationCap, Code } from 'lucide-react';
+import { ChevronDown, ChevronUp, GraduationCap, Sparkles, BookOpen } from 'lucide-react';
 
 interface VivaQuestion {
+  category: 'Fundamentals' | 'A* & Heuristics' | 'Genetic Algorithms' | 'BFS & DFS (B&B)' | 'Examiner Traps';
   question: string;
   answer: string;
   keyPoints: string[];
@@ -11,177 +12,308 @@ interface VivaQuestion {
 
 const VIVA_QUESTIONS: VivaQuestion[] = [
   {
-    question: "What is a Genetic Algorithm (GA)?",
-    answer: "A Genetic Algorithm is a heuristic optimization technique inspired by Charles Darwin's theory of natural evolution. It simulates processes such as selection, crossover, and mutation to iteratively evolve a population of candidate solutions toward an optimal or near-optimal solution.",
+    category: 'Fundamentals',
+    question: "1. What is the Travelling Salesperson Problem (TSP) and what complexity class does it belong to?",
+    answer: "The Traveling Salesperson Problem (TSP) asks for the shortest possible round-trip tour that visits each destination exactly once and returns to the origin. TSP is NP-Hard (its decision version is NP-Complete). There is no known polynomial-time algorithm to solve it exactly for general instances, making intelligent heuristic and metaheuristic search essential.",
     keyPoints: [
-      "Belongs to Evolutionary Computation field of AI",
-      "Works on a population of candidate solutions simultaneously",
-      "Does not require gradient information or explicit mathematical derivatives"
+      "Objective: Minimize round-trip tour distance visiting all N cities once.",
+      "Complexity class: NP-Hard (optimization), NP-Complete (decision).",
+      "Permutation search space size: N! (factorial growth).",
+      "Requires classical AI search paradigms to find optimal/near-optimal solutions."
     ]
   },
   {
-    question: "What is a chromosome in this travel planner?",
-    answer: "A chromosome represents a complete candidate solution to the travel route problem. In Ai-ternary, a chromosome is encoded as an ordered permutation array of destination IDs (e.g. ['Amer Fort', 'Jal Mahal', 'Hawa Mahal']). Each destination in the array represents a gene.",
+    category: 'Fundamentals',
+    question: "2. Why is exhaustive brute force search impractical for travel itinerary planning?",
+    answer: "For N destinations, there are N! distinct route permutations. Factorial growth accelerates dramatically: for N=5, there are 120 paths; for N=10, 3,628,800 paths; for N=15, 1.3 trillion paths; and for N=20, 2.43 × 10¹⁸ paths. An exhaustive brute-force search checking 1 million paths per second would take over 77,000 years for just 20 cities.",
     keyPoints: [
-      "Genotype: Array of destination IDs",
-      "Phenotype: The spatial travel path traversed in order",
-      "Fixed length corresponding to number of destinations"
+      "Factorial time complexity: O(N!).",
+      "Exhaustive search encounters exponential/combinatorial explosion.",
+      "N=10 takes ~3.6M permutations; N=20 is computationally intractable.",
+      "Pruning and heuristics reduce explored states to sub-second runtimes."
     ]
   },
   {
-    question: "How is Fitness defined and evaluated?",
-    answer: "Fitness measures the quality of a solution chromosome. In Ai-ternary, Fitness is defined as Fitness = 1 / Total Euclidean Distance. Because lower travel distance is desirable, taking the reciprocal converts a minimization objective (distance) into a maximization objective (fitness).",
+    category: 'A* & Heuristics',
+    question: "3. What is A* Search and how does it guarantee finding the mathematically optimal route?",
+    answer: "A* is an informed best-first search algorithm that evaluates states using the evaluation function f(n) = g(n) + h(n). Here, g(n) is the exact geodesic distance traveled from the start node, and h(n) is an admissible heuristic (Minimum Spanning Tree of unvisited nodes + entry/exit edges). Because h(n) never overestimates the true remaining cost (h(n) ≤ h*(n)), A* provably guarantees finding the global shortest tour.",
     keyPoints: [
-      "Fitness = 1 / Total Distance",
-      "Shorter route -> Smaller denominator -> Higher fitness score",
-      "Ensures fittest routes have highest probability of selection"
+      "Evaluation function: f(n) = g(n) + h(n).",
+      "g(n): Accumulated Haversine distance from start node.",
+      "h(n): Admissible MST heuristic lower bound.",
+      "Data structure: Binary Min-Heap Priority Queue ordered by f(n).",
+      "Admissibility guarantee: Finds the true global minimum tour."
     ]
   },
   {
-    question: "What is Tournament Selection and why use it?",
-    answer: "Tournament Selection picks k random chromosomes from the population, compares their fitness scores, and selects the winner with highest fitness. It avoids premature convergence and allows tuning of selection pressure by adjusting tournament size k.",
+    category: 'A* & Heuristics',
+    question: "4. What is an Admissible Heuristic and why is the Minimum Spanning Tree (MST) admissible for TSP?",
+    answer: "A heuristic h(n) is admissible if it never overestimates the true cost to reach the goal: h(n) ≤ h*(n). In TSP, any valid tour visiting the remaining unvisited vertices must connect to them, span all of them, and connect back to the start. A Minimum Spanning Tree (MST) on the unvisited vertices is a relaxation of the Hamiltonian path (a tree has fewer constraints than a simple path). Adding the minimum edge from current to unvisited, and from unvisited to start, provides a strict lower bound.",
     keyPoints: [
-      "Tournament size k = 5 used in Ai-ternary",
-      "Prevents single dominant chromosome from taking over population",
-      "Efficient time complexity of O(k)"
+      "Admissibility property: h(n) ≤ h*(n) for all states n.",
+      "MST is a relaxation of the Hamiltonian path through unvisited vertices.",
+      "Prim's algorithm computes MST in O(E log V) time.",
+      "Strict lower bound ensures no optimal paths are discarded prematurely."
     ]
   },
   {
-    question: "What is Ordered Crossover (OX) and why is it used instead of single-point crossover?",
-    answer: "Ordered Crossover (OX) is a specialized crossover operator for permutation problems like TSP. Standard single-point crossover would create invalid routes containing duplicate cities and missing cities. OX copies a contiguous slice from Parent A and fills remaining positions in order from Parent B, preserving valid permutations.",
+    category: 'A* & Heuristics',
+    question: "5. What is the Consistency (Monotonicity) condition of a heuristic in A*?",
+    answer: "A heuristic is consistent (or monotonic) if for every node n and every successor n' generated by an action with step cost c(n, a, n'), the condition h(n) ≤ c(n, a, n') + h(n') holds (triangle inequality). Consistency guarantees that f(n) is monotonically non-decreasing along any path, meaning the first time a goal state is dequeued, its optimal path has been found without requiring re-opening of closed states.",
     keyPoints: [
-      "Prevents duplicate destination visits",
-      "Preserves relative ordering of cities from both parents",
-      "Essential for Traveling Salesperson Problems"
+      "Triangle inequality: h(n) ≤ stepCost + h(n').",
+      "Monotonic f-values: f(n') ≥ f(n).",
+      "Optimal efficiency: No nodes need to be re-evaluated once closed.",
+      "MST heuristic on metric Euclidean/geodesic graphs satisfies consistency."
     ]
   },
   {
-    question: "What is Swap Mutation and what is its role?",
-    answer: "Swap Mutation randomly selects two gene positions in a chromosome and swaps their values with probability mutationRate (5%). Its role is to introduce new genetic variations, prevent premature convergence, and help the algorithm escape local optima.",
+    category: 'Genetic Algorithms',
+    question: "6. What is a Genetic Algorithm (GA) and why is it categorized as a metaheuristic?",
+    answer: "A Genetic Algorithm is a population-based evolutionary metaheuristic inspired by Charles Darwin's theory of natural selection. It is a 'metaheuristic' because it is a higher-level algorithmic framework that guides problem-independent search through massive solution spaces without requiring mathematical gradient or derivative information.",
     keyPoints: [
-      "Mutation rate set to 5% (0.05)",
-      "Swaps 2 random cities in the route",
-      "Maintains diversity across generations"
+      "Population-based search operating on 100 candidate chromosomes simultaneously.",
+      "Metaheuristic: Guides stochastic exploration and exploitation without derivatives.",
+      "Balances diversity (mutation) with convergence (selection and elitism).",
+      "Scales linearly O(g · p · N) even when N is very large."
     ]
   },
   {
-    question: "What is Elitism and why is it important?",
-    answer: "Elitism preserves the top N fittest chromosomes (Top 5 in Ai-ternary) from the current generation directly into the next generation without modification. It guarantees that the best solution found so far is never destroyed or degraded by crossover or mutation.",
+    category: 'Genetic Algorithms',
+    question: "7. How is a chromosome encoded for the Traveling Salesperson Problem?",
+    answer: "In Ai-ternary, a chromosome represents a complete candidate travel route encoded as an ordered permutation array of destination IDs: [dest_3, dest_1, dest_4, dest_2, dest_5]. The start location is fixed as the origin/destination anchor. This permutation encoding guarantees that each destination is visited exactly once.",
     keyPoints: [
-      "Elite count = 5 chromosomes",
-      "Guarantees monotonically non-decreasing best fitness",
-      "Protects top solutions across generations"
+      "Genotype: Array of destination identifiers in visit order.",
+      "Phenotype: The spatial geographic trajectory followed by the traveler.",
+      "Permutation constraint: Every gene must appear exactly once.",
+      "Anchor node: Start location is fixed at origin and return endpoints."
     ]
   },
   {
-    question: "What is a Heuristic in Artificial Intelligence?",
-    answer: "A heuristic is a practical rule-of-thumb or technique designed for solving a problem quickly when classic methods are too slow or exact solutions are computationally infeasible. It prioritizes speed and good-enough accuracy over guaranteed mathematical perfection.",
+    category: 'Genetic Algorithms',
+    question: "8. Why can't standard single-point crossover be used for TSP, and how does Ordered Crossover (OX) solve this?",
+    answer: "Standard single-point crossover cuts chromosomes at an index and swaps tails. In permutation problems like TSP, this produces invalid tours with duplicate cities and missing cities. Ordered Crossover (OX) solves this: it copies a contiguous slice from Parent A directly into the offspring, and then fills all remaining unfilled slots in relative order from Parent B, skipping any city already present in the copied slice.",
     keyPoints: [
-      "Gives practical, near-optimal solutions in fast time",
-      "Guides search through large state spaces",
-      "Used when exact exhaustive search is intractable"
+      "Single-point crossover fails because it produces duplicate and omitted cities.",
+      "Ordered Crossover (OX) preserves sub-tour sequence and permutation validity.",
+      "Step 1: Copy random slice from Parent A into child.",
+      "Step 2: Fill remaining positions in order of appearance from Parent B."
     ]
   },
   {
-    question: "What is Nearest Neighbor (NN) Heuristic?",
-    answer: "Nearest Neighbor is a greedy heuristic search algorithm for TSP. It starts at an origin node and repeatedly visits the closest unvisited destination until all destinations have been visited. In Ai-ternary, it is used to seed the initial population with a high-quality initial chromosome.",
+    category: 'Genetic Algorithms',
+    question: "9. How is Fitness defined in this project and why do you use the reciprocal of distance?",
+    answer: "In route optimization, our natural objective is distance minimization (shorter is better). However, Genetic Algorithms operate on the principle of survival of the fittest (higher fitness = higher survival probability). Therefore, we formulate Fitness as Fitness = 1 / Total Haversine Distance (km). A smaller denominator produces a larger fitness score, converting minimization into maximization.",
     keyPoints: [
-      "Greedy search approach with O(N^2) complexity",
-      "Always picks local minimum distance step",
-      "Seeds Chromosome 1 to accelerate GA convergence"
+      "Formulation: Fitness = 1 / Total_Distance_km.",
+      "Shorter distance → Higher fitness value.",
+      "Enables standard roulette or tournament selection for fitter routes.",
+      "Strictly positive and monotonic."
     ]
   },
   {
-    question: "Why use Genetic Algorithms instead of Brute Force Search?",
-    answer: "For N destinations, brute force search evaluates N! (factorial) possible route permutations. For 10 destinations, 10! = 3.6 million routes. For 20 destinations, 20! = 2.4 × 10^18 routes, which is impossible to compute in real time. GA finds near-optimal routes in O(g × p × N) time.",
+    category: 'Genetic Algorithms',
+    question: "10. What is Tournament Selection, and what is the effect of tournament size k?",
+    answer: "Tournament Selection chooses individuals for reproduction by randomly drawing k chromosomes from the population and selecting the one with the highest fitness. In Ai-ternary, k = 5. If k is too small (e.g. k=1), selection pressure is zero (random walk). If k is too large (e.g. k=50), selection pressure is too high, leading to premature convergence onto suboptimal local minima.",
     keyPoints: [
-      "Brute force complexity is O(N!), exploding exponentially",
-      "GA complexity is linear with respect to generations and population: O(g × p × N)",
-      "GA scales efficiently to large destination sets"
+      "Mechanism: Draw k random candidates; best fitness wins parenthood.",
+      "Tournament size k controls selection pressure.",
+      "k = 5 provides optimal balance between exploration and exploitation.",
+      "Computational complexity is O(k), significantly faster than roulette wheel O(P)."
     ]
   },
   {
-    question: "What are the main Advantages of Genetic Algorithms?",
-    answer: "1) Efficient exploration of massive, complex search spaces. 2) Does not require gradient or mathematical derivative functions. 3) Easily parallelizable. 4) Robust against getting stuck in single local minimum compared to pure greedy algorithms.",
+    category: 'Genetic Algorithms',
+    question: "11. What is Swap Mutation and why is the mutation rate set to 5%?",
+    answer: "Swap Mutation randomly selects two gene positions in a chromosome and swaps their indices. Its purpose is to introduce fresh genetic diversity and allow the algorithm to escape local minima traps. A mutation rate of 5% (0.05) is ideal: if mutation is too high (>30%), GA degenerates into a random walk; if too low (0%), the population stagnates and loses diversity.",
     keyPoints: [
-      "Global optimization capability",
-      "Flexible and customizable for custom constraints",
-      "Combines exploration (crossover/mutation) and exploitation (selection/elitism)"
+      "Operator: Swaps two random cities in the tour.",
+      "Purpose: Maintains genetic diversity; prevents premature stagnation.",
+      "Mutation rate = 5% (standard best practice in evolutionary TSP).",
+      "Balances exploration of new territory with preservation of fit schemata."
     ]
   },
   {
-    question: "What are the Limitations of Genetic Algorithms?",
-    answer: "1) No theoretical guarantee of finding the absolute global optimum. 2) Computationally more expensive than pure greedy heuristics for small N. 3) Sensitive to hyperparameter tuning (population size, mutation rate).",
+    category: 'Genetic Algorithms',
+    question: "12. What is Elitism and why is it vital for convergence?",
+    answer: "Elitism guarantees that the top-performing chromosomes (in our case, Top 5 elites) are copied directly into the next generation without undergoing crossover or mutation. Without elitism, random crossover or mutation could destroy the best solution discovered so far. Elitism ensures that the best fitness across generations is monotonically non-decreasing.",
     keyPoints: [
-      "Stochastic nature yields slight variations per run",
-      "Hyperparameter tuning required for optimal performance",
-      "Can suffer from premature convergence if selection pressure is too high"
+      "Preserves the top 5 fittest chromosomes directly into the next generation.",
+      "Guarantees the best solution discovered is never lost.",
+      "Ensures monotonically non-decreasing best fitness over 100 generations.",
+      "Accelerates convergence toward the global near-optimum."
+    ]
+  },
+  {
+    category: 'BFS & DFS (B&B)',
+    question: "13. How does Greedy Search (Nearest Neighbor) work and why does it get trapped in local optima?",
+    answer: "Greedy Search selects the closest unvisited node from the current node at each step. While it runs in O(N²) time, it is 'myopic' (short-sighted). By eagerly choosing nearby destinations early on, it often leaves destinations on opposite ends of the territory for last, forcing an expensive, long-distance trek back to origin on the closing legs.",
+    keyPoints: [
+      "Heuristic rule: argmin dist(current, unvisited).",
+      "Time complexity: O(N²) deterministic.",
+      "Trap: Leaves distant nodes for last, causing high-cost closing legs.",
+      "Role in Ai-ternary: Provides initial incumbent upper-bound for Branch-and-Bound."
+    ]
+  },
+  {
+    category: 'BFS & DFS (B&B)',
+    question: "14. How does Breadth-First Search (BFS) work for TSP and how does Branch-and-Bound prevent memory collapse?",
+    answer: "BFS explores states level-by-level using a FIFO Queue, where level d represents all subpaths of length d. Without pruning, BFS explores N! nodes and consumes O(b^d) memory. With Branch-and-Bound, we track bestKnownDistance (seeded by Greedy search). Whenever an incomplete subpath's distance g(n) already equals or exceeds bestKnownDistance, that branch is pruned immediately without generating its children.",
+    keyPoints: [
+      "FIFO Queue exploring depth 1, then depth 2, etc.",
+      "Pruning rule: If g(n) ≥ bestDistance, prune branch immediately.",
+      "Seeded with Greedy baseline for tight initial bounding.",
+      "Guarantees optimality while pruning vast subtrees."
+    ]
+  },
+  {
+    category: 'BFS & DFS (B&B)',
+    question: "15. How does Depth-First Search (DFS) with Greedy Branch Ordering achieve O(N) memory efficiency?",
+    answer: "DFS traverses candidate paths deeply down to leaf tours before backtracking using a LIFO call stack. By sorting candidate branches nearest-first (Greedy branch ordering), DFS discovers high-quality complete tours very early in the search, rapidly tightening bestKnownDistance. Branch-and-bound then prunes subtrees aggressively. Because only the current recursion path is stored, DFS operates in strictly linear O(N) memory.",
+    keyPoints: [
+      "LIFO Call Stack / Recursive backtracking.",
+      "Greedy branch ordering discovers tight upper bounds early.",
+      "Branch-and-Bound prunes subtrees where g(n) ≥ bestDistance.",
+      "Memory space complexity: O(N) linear, vastly superior to BFS."
+    ]
+  },
+  {
+    category: 'Examiner Traps',
+    question: "16. When would you use A* versus Genetic Algorithm in real-world software engineering?",
+    answer: "A* should be chosen when mathematical optimality is mandatory and the problem size is moderate (N ≤ 20), because its priority queue state generation grows exponentially O(b^d). GA should be chosen when N is large (N > 25, e.g. 50-500 cities in logistics routing), where exact search is computationally impossible but GA provides near-optimal tours in bounded linear time O(g · p · N).",
+    keyPoints: [
+      "N ≤ 20: Use A* for guaranteed mathematical global optimality.",
+      "N > 20: Use GA for bounded memory and scalable linear execution.",
+      "A* trade-off: Optimal but memory-intensive for large N.",
+      "GA trade-off: Near-optimal with predictable sub-second runtime."
+    ]
+  },
+  {
+    category: 'Examiner Traps',
+    question: "17. What is the difference between Euclidean and Haversine distance, and why does Haversine matter?",
+    answer: "Euclidean distance measures straight-line distance on a flat 2D plane: sqrt(dx² + dy²). However, Earth is an oblate spheroid. The Haversine formula calculates the great-circle distance between two latitude/longitude points over Earth's spherical surface (mean radius R = 6371 km). Using Euclidean distance on geographic coordinates distorts distances due to longitude convergence toward the poles.",
+    keyPoints: [
+      "Euclidean: Flat 2D plane geometry.",
+      "Haversine: Great-circle spherical trigonometry on Earth (R = 6371 km).",
+      "Accounts for Earth's curvature and latitude/longitude convergence.",
+      "Essential for accurate real-world travel routing."
+    ]
+  },
+  {
+    category: 'Examiner Traps',
+    question: "18. Academic Defense: Does this project use any Machine Learning or Deep Learning models?",
+    answer: "No. Ai-ternary is a 100% Classical Artificial Intelligence application. It relies entirely on classical search paradigms, heuristic evaluation functions, graph theory (Minimum Spanning Trees), and metaheuristic evolutionary computing. It does not use neural networks, pre-trained weights, dataset training, or third-party LLM APIs. Every route calculation is fully deterministic, explainable, and reproducible.",
+    keyPoints: [
+      "Zero Neural Networks, Machine Learning, or LLM APIs.",
+      "Pure classical AI: Informed search, uninformed search, metaheuristics.",
+      "Completely self-contained algorithms running in TypeScript.",
+      "100% explainable, mathematically formulated, and verifiable."
     ]
   }
 ];
 
 export const VivaPrepAccordion: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+
+  const categories = ['All', 'Fundamentals', 'A* & Heuristics', 'Genetic Algorithms', 'BFS & DFS (B&B)', 'Examiner Traps'];
+
+  const filteredQuestions = selectedCategory === 'All'
+    ? VIVA_QUESTIONS
+    : VIVA_QUESTIONS.filter(q => q.category === selectedCategory);
 
   const toggleAccordion = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
   return (
-    <div className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-5">
-      <div className="flex items-center gap-3 pb-4 border-b border-slate-800/80">
-        <div className="w-10 h-10 rounded-xl bg-indigo-950 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
-          <GraduationCap className="w-5 h-5" />
+    <div className="pro-card p-6 rounded-2xl border-2 border-pink-200 bg-white shadow-[4px_4px_0px_#F472B6] space-y-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-pink-100">
+        <div className="flex items-center gap-3">
+          <div className="w-11 h-11 rounded-xl bg-pink-100 border-2 border-pink-300 flex items-center justify-center text-pink-600 shadow-[2px_2px_0px_#F472B6]">
+            <GraduationCap className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-base font-pixel font-bold text-pink-950">
+              Viva Voce Master Preparation & External Examiner Q&A Guide
+            </h3>
+            <p className="text-xs text-pink-700/80 mt-0.5 font-sans">
+              18 in-depth questions and structured answers designed for college evaluation and external viva defense.
+            </p>
+          </div>
         </div>
-        <div>
-          <h3 className="text-base font-bold text-slate-100">Viva Voce Preparation & Key Questions</h3>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Model Q&A designed for college external examiners and viva evaluations.
-          </p>
+
+        <div className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-pink-50 border border-pink-200 text-pink-800 font-pixel text-xs">
+          <Sparkles className="w-3.5 h-3.5 text-pink-500" />
+          Examiner-Ready
         </div>
       </div>
 
+      {/* Category Filter Pills */}
+      <div className="flex flex-wrap gap-1.5 pb-1">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            type="button"
+            onClick={() => {
+              setSelectedCategory(cat);
+              setOpenIndex(0);
+            }}
+            className={`px-3 py-1.5 rounded-lg text-xs font-pixel transition-all cursor-pointer ${
+              selectedCategory === cat
+                ? 'bg-pink-500 text-white border-2 border-pink-600 shadow-[2px_2px_0px_#9D174D]'
+                : 'pixel-btn text-pink-700 bg-pink-50 border-pink-200'
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      {/* Accordion Questions */}
       <div className="space-y-3">
-        {VIVA_QUESTIONS.map((q, idx) => {
+        {filteredQuestions.map((q, idx) => {
           const isOpen = openIndex === idx;
 
           return (
             <div
               key={idx}
-              className={`rounded-xl border transition-all overflow-hidden ${
+              className={`rounded-xl border-2 transition-all overflow-hidden ${
                 isOpen
-                  ? 'bg-slate-950/90 border-indigo-500/40 shadow-md'
-                  : 'bg-slate-900/60 border-slate-800 hover:border-slate-700'
+                  ? 'bg-pink-50/60 border-pink-400 shadow-[3px_3px_0px_#F472B6]'
+                  : 'bg-white border-pink-200 hover:border-pink-300 shadow-[2px_2px_0px_#FBCFE8]'
               }`}
             >
               <button
                 type="button"
                 onClick={() => toggleAccordion(idx)}
-                className="w-full px-4 py-3.5 flex items-center justify-between text-left text-xs font-semibold text-slate-200 cursor-pointer"
+                className="w-full px-4 py-3.5 flex items-center justify-between text-left text-xs font-pixel font-semibold text-pink-950 cursor-pointer"
               >
-                <span className="flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-md bg-slate-800 text-indigo-400 font-mono text-[11px] flex items-center justify-center shrink-0">
-                    Q{idx + 1}
+                <span className="flex items-center gap-2.5">
+                  <span className="px-2 py-0.5 rounded-md bg-pink-100 text-pink-800 border border-pink-300 font-pixel text-[10px] shrink-0">
+                    {q.category}
                   </span>
                   <span>{q.question}</span>
                 </span>
                 {isOpen ? (
-                  <ChevronUp className="w-4 h-4 text-indigo-400 shrink-0" />
+                  <ChevronUp className="w-4 h-4 text-pink-600 shrink-0" />
                 ) : (
-                  <ChevronDown className="w-4 h-4 text-slate-500 shrink-0" />
+                  <ChevronDown className="w-4 h-4 text-pink-400 shrink-0" />
                 )}
               </button>
 
               {isOpen && (
-                <div className="px-4 pb-4 pt-1 text-xs space-y-3 border-t border-slate-800/60">
-                  <p className="text-slate-300 leading-relaxed font-sans">{q.answer}</p>
-                  
-                  <div className="bg-slate-900/80 p-3 rounded-lg border border-slate-800 space-y-1.5">
-                    <span className="text-[10px] uppercase font-bold text-indigo-400 tracking-wider">Key Talking Points for Viva:</span>
-                    <ul className="space-y-1 text-slate-400">
+                <div className="px-4 pb-4 pt-1 text-xs space-y-3 border-t-2 border-pink-100">
+                  <p className="text-zinc-700 leading-relaxed font-sans">{q.answer}</p>
+
+                  <div className="bg-white p-3.5 rounded-xl border-2 border-pink-200 space-y-1.5 shadow-[2px_2px_0px_#FBCFE8]">
+                    <span className="text-[10px] uppercase font-pixel font-bold text-pink-700 tracking-wider">
+                      Key Viva Bullet Points:
+                    </span>
+                    <ul className="space-y-1 text-zinc-600 font-sans text-[11px]">
                       {q.keyPoints.map((point, pIdx) => (
-                        <li key={pIdx} className="flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                        <li key={pIdx} className="flex items-start gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-pink-500 mt-1.5 shrink-0" />
                           <span>{point}</span>
                         </li>
                       ))}

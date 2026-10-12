@@ -1,238 +1,280 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Cpu, Dna, Trophy, Scissors, RefreshCw, Star, Compass, ArrowRight, Check } from 'lucide-react';
+import { Cpu, Dna, Trophy, Scissors, RefreshCw, Compass, Layers, GitBranch } from 'lucide-react';
+
+type ExplainerTab = 'astar' | 'ga' | 'greedy' | 'bfs' | 'dfs';
 
 export const AlgorithmExplainer: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'chromosome' | 'selection' | 'crossover' | 'mutation' | 'elitism'>('chromosome');
+  const [activeTab, setActiveTab] = useState<ExplainerTab>('astar');
 
   return (
-    <div className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-6">
+    <div className="pro-card p-6 rounded-2xl border-2 border-pink-200 bg-white shadow-[4px_4px_0px_#F472B6] space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800/80">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-pink-100">
         <div>
           <div className="flex items-center gap-2">
-            <Cpu className="w-5 h-5 text-cyan-400" />
-            <h3 className="text-base font-bold text-slate-100">AI Engine Architecture Walkthrough</h3>
+            <Cpu className="w-5 h-5 text-pink-500" />
+            <h3 className="text-base font-pixel font-bold text-pink-950">AI Search Algorithms Interactive Theory & Lab</h3>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Interactive visual breakdown of Genetic Algorithm operators and Heuristic Search concepts in Ai-ternary.
+          <p className="text-xs text-pink-700/80 mt-1 font-sans">
+            Visual breakdown of all 5 algorithms: A* Search, Genetic Algorithm, Greedy Search, BFS, and DFS.
           </p>
         </div>
       </div>
 
       {/* Tabs Header */}
-      <div className="flex flex-wrap gap-2 p-1.5 bg-slate-950/80 rounded-xl border border-slate-800/80">
+      <div className="flex flex-wrap gap-2 p-1.5 bg-pink-50/70 rounded-xl border-2 border-pink-200">
         <button
           type="button"
-          onClick={() => setActiveTab('chromosome')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-            activeTab === 'chromosome'
-              ? 'bg-cyan-600 text-white shadow-md shadow-cyan-600/30'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+          onClick={() => setActiveTab('astar')}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-pixel font-semibold transition-all cursor-pointer ${
+            activeTab === 'astar'
+              ? 'bg-emerald-600 text-white border-2 border-emerald-700 shadow-[2px_2px_0px_#065F46]'
+              : 'pixel-btn text-emerald-800 bg-white border-pink-200 hover:bg-emerald-50'
+          }`}
+        >
+          <span className="w-2 h-2 rounded-full bg-emerald-400" />
+          1. A* Search (Informed)
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('ga')}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-pixel font-semibold transition-all cursor-pointer ${
+            activeTab === 'ga'
+              ? 'bg-pink-500 text-white border-2 border-pink-600 shadow-[2px_2px_0px_#9D174D]'
+              : 'pixel-btn text-pink-700 bg-white border-pink-200 hover:bg-pink-100'
           }`}
         >
           <Dna className="w-3.5 h-3.5" />
-          1. Chromosomes & Fitness
+          2. Genetic Algorithm (Metaheuristic)
         </button>
 
         <button
           type="button"
-          onClick={() => setActiveTab('selection')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-            activeTab === 'selection'
-              ? 'bg-cyan-600 text-white shadow-md shadow-cyan-600/30'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+          onClick={() => setActiveTab('greedy')}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-pixel font-semibold transition-all cursor-pointer ${
+            activeTab === 'greedy'
+              ? 'bg-amber-500 text-white border-2 border-amber-600 shadow-[2px_2px_0px_#92400E]'
+              : 'pixel-btn text-amber-800 bg-white border-pink-200 hover:bg-amber-50'
           }`}
         >
-          <Trophy className="w-3.5 h-3.5" />
-          2. Tournament Selection
+          <Compass className="w-3.5 h-3.5" />
+          3. Greedy Search (Local)
         </button>
 
         <button
           type="button"
-          onClick={() => setActiveTab('crossover')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-            activeTab === 'crossover'
-              ? 'bg-cyan-600 text-white shadow-md shadow-cyan-600/30'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+          onClick={() => setActiveTab('bfs')}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-pixel font-semibold transition-all cursor-pointer ${
+            activeTab === 'bfs'
+              ? 'bg-purple-600 text-white border-2 border-purple-700 shadow-[2px_2px_0px_#581C87]'
+              : 'pixel-btn text-purple-800 bg-white border-pink-200 hover:bg-purple-50'
           }`}
         >
-          <Scissors className="w-3.5 h-3.5" />
-          3. Ordered Crossover (OX)
+          <Layers className="w-3.5 h-3.5" />
+          4. BFS (Level B&B)
         </button>
 
         <button
           type="button"
-          onClick={() => setActiveTab('mutation')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-            activeTab === 'mutation'
-              ? 'bg-cyan-600 text-white shadow-md shadow-cyan-600/30'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+          onClick={() => setActiveTab('dfs')}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-pixel font-semibold transition-all cursor-pointer ${
+            activeTab === 'dfs'
+              ? 'bg-rose-500 text-white border-2 border-rose-600 shadow-[2px_2px_0px_#9F1239]'
+              : 'pixel-btn text-rose-800 bg-white border-pink-200 hover:bg-rose-50'
           }`}
         >
-          <RefreshCw className="w-3.5 h-3.5" />
-          4. Swap Mutation
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('elitism')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-            activeTab === 'elitism'
-              ? 'bg-cyan-600 text-white shadow-md shadow-cyan-600/30'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
-          }`}
-        >
-          <Star className="w-3.5 h-3.5" />
-          5. Elitism & NN Heuristic
+          <GitBranch className="w-3.5 h-3.5" />
+          5. DFS (Deep B&B)
         </button>
       </div>
 
-      {/* Tab 1: Chromosome & Fitness */}
-      {activeTab === 'chromosome' && (
+      {/* Tab 1: A* Search */}
+      {activeTab === 'astar' && (
         <div className="space-y-4">
-          <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
-            <h4 className="text-sm font-bold text-slate-200 mb-2">Chromosome Formulation</h4>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              In Genetic Algorithms applied to the Traveling Salesperson Problem (TSP), a <strong>chromosome</strong> represents a complete candidate travel route encoded as an ordered sequence of location IDs (genes).
+          <div className="p-4 rounded-xl bg-pink-50/70 border-2 border-pink-200 shadow-[2px_2px_0px_#FBCFE8]">
+            <h4 className="text-sm font-pixel font-bold text-emerald-900 mb-1 flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+              A* Search: Mathematical Formulation & Admissible MST Heuristic
+            </h4>
+            <p className="text-xs text-zinc-700 leading-relaxed font-sans">
+              A* is an optimal informed search algorithm that guides route exploration using the evaluation function <strong>f(n) = g(n) + h(n)</strong>, where <code>g(n)</code> is the exact geodesic distance traveled from the origin, and <code>h(n)</code> is an admissible heuristic estimate of the remaining cost to visit all unvisited nodes and return.
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-950/80 border border-cyan-500/20 space-y-3 font-mono text-xs">
-            <div className="text-slate-400 text-[11px] font-sans font-semibold uppercase">Chromosome Structure Example:</div>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="px-2.5 py-1.5 rounded-lg bg-cyan-950 text-cyan-300 border border-cyan-500/30">Start: Jaipur</span>
-              <ArrowRight className="w-3.5 h-3.5 text-slate-600" />
-              <span className="px-2.5 py-1.5 rounded-lg bg-slate-900 text-slate-200 border border-slate-800">Gene 1: Jal Mahal</span>
-              <span className="px-2.5 py-1.5 rounded-lg bg-slate-900 text-slate-200 border border-slate-800">Gene 2: Amer Fort</span>
-              <span className="px-2.5 py-1.5 rounded-lg bg-slate-900 text-slate-200 border border-slate-800">Gene 3: Hawa Mahal</span>
-              <span className="px-2.5 py-1.5 rounded-lg bg-slate-900 text-slate-200 border border-slate-800">Gene 4: City Palace</span>
-            </div>
-
-            <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-slate-300 font-sans">
-              <span>Fitness Function:</span>
-              <code className="text-emerald-400 font-mono font-bold bg-slate-900 px-2.5 py-1 rounded-md border border-slate-800">
-                Fitness = 1 / Total Haversine Distance (km)
-              </code>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 2: Selection */}
-      {activeTab === 'selection' && (
-        <div className="space-y-4">
-          <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
-            <h4 className="text-sm font-bold text-slate-200 mb-2">Tournament Selection Operator (k = 5)</h4>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              To choose parents for reproduction, <strong>k = 5 random chromosomes</strong> are sampled from the population. The chromosome with the highest fitness score wins the tournament and is chosen as a parent.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-xs">
-            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800">
-              <div className="text-[11px] text-slate-400 font-sans font-semibold">Candidate 1</div>
-              <div className="text-slate-300 mt-1">Distance: 310.2 km</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Fitness: 0.00322</div>
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-cyan-950/80 border border-cyan-500/50 shadow-lg shadow-cyan-900/20">
-              <div className="text-[11px] text-cyan-300 font-sans font-bold flex items-center justify-between">
-                Candidate 2 (Winner) <Trophy className="w-3.5 h-3.5 text-cyan-400" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 rounded-xl bg-white border-2 border-emerald-200 space-y-3 font-mono text-xs shadow-[2px_2px_0px_#A7F3D0]">
+              <div className="text-emerald-800 text-[11px] font-pixel font-semibold uppercase">A* Evaluation Function:</div>
+              <div className="p-2.5 rounded-lg bg-emerald-50 border border-emerald-300 text-emerald-950 font-bold">
+                <code>f(n) = g(n) + h(n)</code>
               </div>
-              <div className="text-cyan-100 font-bold mt-1">Distance: 247.3 km</div>
-              <div className="text-emerald-400 font-bold text-[11px] mt-0.5">Fitness: 0.00404 ★</div>
+              <ul className="space-y-1.5 text-[11px] text-zinc-600 font-sans">
+                <li>• <strong>g(n):</strong> Exact accumulated Haversine distance from start to current node.</li>
+                <li>• <strong>h(n):</strong> Minimum Spanning Tree (MST) weight of unvisited nodes + entry/exit edges.</li>
+                <li>• <strong>Data Structure:</strong> Binary Min-Heap Priority Queue ordered by f(n).</li>
+              </ul>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800">
-              <div className="text-[11px] text-slate-400 font-sans font-semibold">Candidate 3</div>
-              <div className="text-slate-300 mt-1">Distance: 289.0 km</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Fitness: 0.00346</div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 3: Crossover */}
-      {activeTab === 'crossover' && (
-        <div className="space-y-4">
-          <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
-            <h4 className="text-sm font-bold text-slate-200 mb-2">Ordered Crossover (OX) Operator</h4>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Standard single-point crossover produces duplicate cities in routes. <strong>Ordered Crossover (OX)</strong> preserves relative ordering of cities by copying a contiguous slice from Parent A and filling remaining slots in order from Parent B.
-            </p>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3 font-mono text-xs">
-            <div className="flex items-center justify-between text-slate-300">
-              <span>Parent A:</span>
-              <span className="text-cyan-400 bg-cyan-950 px-2 py-0.5 rounded">[A, <strong className="text-emerald-400">B, C, D</strong>, E]</span>
-            </div>
-            <div className="flex items-center justify-between text-slate-300">
-              <span>Parent B:</span>
-              <span className="text-slate-400 bg-slate-900 px-2 py-0.5 rounded">[C, E, A, D, B]</span>
-            </div>
-            <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-slate-200">
-              <span className="font-sans font-bold text-cyan-300">Child (OX):</span>
-              <span className="text-emerald-300 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/30">
-                [E, <strong className="text-emerald-400">B, C, D</strong>, A]
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 4: Mutation */}
-      {activeTab === 'mutation' && (
-        <div className="space-y-4">
-          <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
-            <h4 className="text-sm font-bold text-slate-200 mb-2">Swap Mutation Operator (5% Rate)</h4>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Mutation maintains genetic diversity and prevents population stagnation. Swap mutation picks two gene positions at random and swaps their values.
-            </p>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3 font-mono text-xs">
-            <div className="flex items-center justify-between text-slate-300">
-              <span>Before Mutation:</span>
-              <span className="text-slate-300">[Amer Fort, <span className="text-rose-400 font-bold bg-rose-950/60 px-1.5 rounded">Jal Mahal</span>, Hawa Mahal, <span className="text-rose-400 font-bold bg-rose-950/60 px-1.5 rounded">City Palace</span>]</span>
-            </div>
-            <div className="flex items-center justify-between text-slate-200">
-              <span className="font-sans font-bold text-cyan-300">After Swap:</span>
-              <span className="text-emerald-300">[Amer Fort, <span className="text-emerald-400 font-bold bg-emerald-950/60 px-1.5 rounded">City Palace</span>, Hawa Mahal, <span className="text-emerald-400 font-bold bg-emerald-950/60 px-1.5 rounded">Jal Mahal</span>]</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 5: Elitism & Heuristic */}
-      {activeTab === 'elitism' && (
-        <div className="space-y-4">
-          <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
-            <h4 className="text-sm font-bold text-slate-200 mb-2">Nearest Neighbor Heuristic & Elitism Strategy</h4>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              The <strong>Nearest Neighbor (NN) Heuristic</strong> seeds Chromosome 1 with a greedy solution, giving the GA a strong starting point. <strong>Elitism (Top 5)</strong> guarantees top solutions pass into the next generation without modification.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-emerald-500/20">
-              <div className="font-bold text-emerald-300 flex items-center gap-1.5 mb-1">
-                <Compass className="w-3.5 h-3.5" /> Nearest Neighbor Heuristic
+            <div className="p-4 rounded-xl bg-white border-2 border-pink-200 space-y-3 text-xs shadow-[2px_2px_0px_#FBCFE8]">
+              <div className="text-pink-800 text-[11px] font-pixel font-semibold uppercase">Why A* Guarantees Global Optimality:</div>
+              <p className="text-zinc-600 text-[11px] leading-relaxed font-sans">
+                Because an MST is a relaxed subgraph of any valid Hamiltonian path connecting unvisited vertices, <strong>h(n) ≤ h*(n)</strong> (never overestimates the true remaining distance).
+              </p>
+              <div className="p-2.5 rounded-lg bg-emerald-50 border-2 border-emerald-300 text-emerald-900 text-[11px] font-sans">
+                <strong>Admissibility Theorem:</strong> If h(n) is admissible, the first complete tour popped from the priority queue is provably the global minimum.
               </div>
-              <p className="text-slate-400 text-[11px]">
-                Greedy search algorithm that selects the closest unvisited location next. Provides fast baseline route.
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab 2: Genetic Algorithm */}
+      {activeTab === 'ga' && (
+        <div className="space-y-4">
+          <div className="p-4 rounded-xl bg-pink-50/70 border-2 border-pink-200 shadow-[2px_2px_0px_#FBCFE8]">
+            <h4 className="text-sm font-pixel font-bold text-pink-950 mb-1 flex items-center gap-2">
+              <Dna className="w-4 h-4 text-pink-500" />
+              Genetic Algorithm (GA): Evolutionary Operators Walkthrough
+            </h4>
+            <p className="text-xs text-zinc-700 leading-relaxed font-sans">
+              GA maintains a population of 100 chromosomes (candidate routes) and evolves them over 100 generations using biological operators: Tournament Selection, Ordered Crossover (OX), Swap Mutation, and Elitism.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div className="p-3.5 rounded-xl bg-white border-2 border-pink-200 shadow-[2px_2px_0px_#FBCFE8]">
+              <div className="text-[11px] font-pixel font-bold text-pink-700 flex items-center gap-1.5 mb-1.5">
+                <Trophy className="w-3.5 h-3.5 text-pink-500" /> 1. Tournament Selection (k=5)
+              </div>
+              <p className="text-[11px] text-zinc-600 leading-relaxed font-sans">
+                Samples 5 random chromosomes from the population; the one with highest fitness (1 / Distance) wins parenthood.
               </p>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-cyan-500/20">
-              <div className="font-bold text-cyan-300 flex items-center gap-1.5 mb-1">
-                <Star className="w-3.5 h-3.5" /> Elitism Strategy
+            <div className="p-3.5 rounded-xl bg-white border-2 border-pink-200 shadow-[2px_2px_0px_#FBCFE8]">
+              <div className="text-[11px] font-pixel font-bold text-emerald-700 flex items-center gap-1.5 mb-1.5">
+                <Scissors className="w-3.5 h-3.5 text-emerald-500" /> 2. Ordered Crossover (OX)
               </div>
-              <p className="text-slate-400 text-[11px]">
-                Top 5 fittest chromosomes bypass crossover/mutation directly into next generation, preserving peak fitness scores.
+              <p className="text-[11px] text-zinc-600 leading-relaxed font-sans">
+                Copies a contiguous subpath from Parent A, then fills remaining slots from Parent B in order, preventing duplicate cities.
               </p>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-white border-2 border-pink-200 shadow-[2px_2px_0px_#FBCFE8]">
+              <div className="text-[11px] font-pixel font-bold text-purple-700 flex items-center gap-1.5 mb-1.5">
+                <RefreshCw className="w-3.5 h-3.5 text-purple-500" /> 3. Swap Mutation & Elitism
+              </div>
+              <p className="text-[11px] text-zinc-600 leading-relaxed font-sans">
+                Randomly swaps two cities with 5% probability to escape local optima. Top 5 elites bypass mutation into next gen.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab 3: Greedy Search */}
+      {activeTab === 'greedy' && (
+        <div className="space-y-4">
+          <div className="p-4 rounded-xl bg-amber-50/70 border-2 border-amber-200 shadow-[2px_2px_0px_#FDE68A]">
+            <h4 className="text-sm font-pixel font-bold text-amber-950 mb-1 flex items-center gap-2">
+              <Compass className="w-4 h-4 text-amber-500" />
+              Greedy Search (Nearest Neighbor Heuristic)
+            </h4>
+            <p className="text-xs text-zinc-700 leading-relaxed font-sans">
+              Greedy search makes the locally optimal choice at each step without considering long-term global consequences.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div className="p-4 rounded-xl bg-white border-2 border-amber-200 space-y-2 shadow-[2px_2px_0px_#FDE68A]">
+              <div className="text-[11px] font-pixel font-bold uppercase text-amber-800">Execution Strategy:</div>
+              <ol className="space-y-1.5 text-zinc-700 text-[11px] list-decimal list-inside font-sans">
+                <li>Start at origin node S.</li>
+                <li>Examine all unvisited destinations.</li>
+                <li>Select node v with minimum distance to current node.</li>
+                <li>Mark v visited, set current = v, repeat until all visited.</li>
+                <li>Return to origin S.</li>
+              </ol>
+            </div>
+
+            <div className="p-4 rounded-xl bg-white border-2 border-pink-200 space-y-2 shadow-[2px_2px_0px_#FBCFE8]">
+              <div className="text-[11px] font-pixel font-bold uppercase text-pink-800">The "Myopic" Local Optimum Trap:</div>
+              <p className="text-zinc-600 text-[11px] leading-relaxed font-sans">
+                Because Greedy only looks 1 step ahead, it often exhausts convenient close neighbors early. By the end of the tour, the only remaining unvisited nodes are on opposite ends of the region, forcing a huge, costly traversal back.
+              </p>
+              <div className="p-2 rounded-lg bg-pink-50 border border-pink-300 text-[10px] text-pink-900 font-mono">
+                Complexity: O(N²) Time • O(N) Space • Deterministic
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab 4: BFS */}
+      {activeTab === 'bfs' && (
+        <div className="space-y-4">
+          <div className="p-4 rounded-xl bg-purple-50/70 border-2 border-purple-200 shadow-[2px_2px_0px_#E9D5FF]">
+            <h4 className="text-sm font-pixel font-bold text-purple-950 mb-1 flex items-center gap-2">
+              <Layers className="w-4 h-4 text-purple-500" />
+              Breadth-First Search (BFS) with Branch-and-Bound
+            </h4>
+            <p className="text-xs text-zinc-700 leading-relaxed font-sans">
+              BFS explores the permutation state-space tree level-by-level using a FIFO Queue. For TSP, depth represents the number of visited cities.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div className="p-4 rounded-xl bg-white border-2 border-purple-200 space-y-2 shadow-[2px_2px_0px_#E9D5FF]">
+              <div className="text-[11px] font-pixel font-bold uppercase text-purple-800">Level-by-Level Queue Structure:</div>
+              <div className="font-mono text-[11px] space-y-1 text-purple-900 bg-purple-50 p-2.5 rounded-lg border border-purple-200">
+                <div>Level 0: [Origin] (Depth 0)</div>
+                <div>Level 1: [A], [B], [C] (Depth 1)</div>
+                <div>Level 2: [A-B], [A-C], [B-A], [B-C]... (Depth 2)</div>
+                <div>Level N: Complete candidate tours</div>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-white border-2 border-pink-200 space-y-2 shadow-[2px_2px_0px_#FBCFE8]">
+              <div className="text-[11px] font-pixel font-bold uppercase text-pink-800">Branch-and-Bound Bounding:</div>
+              <p className="text-zinc-600 text-[11px] leading-relaxed font-sans">
+                Without pruning, BFS suffers from exponential memory consumption O(b^d). Ai-ternary incorporates Branch-and-Bound: whenever a sub-path's accumulated cost <code>g(n) ≥ bestDistance</code>, the branch is immediately pruned without queuing children.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab 5: DFS */}
+      {activeTab === 'dfs' && (
+        <div className="space-y-4">
+          <div className="p-4 rounded-xl bg-rose-50/70 border-2 border-rose-200 shadow-[2px_2px_0px_#FECDD3]">
+            <h4 className="text-sm font-pixel font-bold text-rose-950 mb-1 flex items-center gap-2">
+              <GitBranch className="w-4 h-4 text-rose-500" />
+              Depth-First Search (DFS) with Greedy Branch Ordering
+            </h4>
+            <p className="text-xs text-zinc-700 leading-relaxed font-sans">
+              DFS explores down candidate branches deeply to full leaf tours before backtracking. It requires minimal linear memory O(N).
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div className="p-4 rounded-xl bg-white border-2 border-rose-200 space-y-2 shadow-[2px_2px_0px_#FECDD3]">
+              <div className="text-[11px] font-pixel font-bold uppercase text-rose-800">Greedy Branch Ordering:</div>
+              <p className="text-zinc-600 text-[11px] leading-relaxed font-sans">
+                At each node, unvisited successors are sorted by distance (closest first). This heuristic branch ordering causes DFS to find high-quality tours very early in execution.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-white border-2 border-pink-200 space-y-2 shadow-[2px_2px_0px_#FBCFE8]">
+              <div className="text-[11px] font-pixel font-bold uppercase text-pink-800">Backtracking & Aggressive Pruning:</div>
+              <p className="text-zinc-600 text-[11px] leading-relaxed font-sans">
+                Once a tight upper bound is found, vast subtrees where <code>g(n) ≥ bestKnown</code> are immediately abandoned, reducing execution from millions of iterations to just a few milliseconds.
+              </p>
+              <div className="p-2 rounded-lg bg-rose-50 border border-rose-300 text-[10px] text-rose-900 font-mono">
+                Space Complexity: O(N) Call Stack • Extreme Memory Efficiency
+              </div>
             </div>
           </div>
         </div>

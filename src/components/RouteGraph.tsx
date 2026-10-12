@@ -17,26 +17,24 @@ export const RouteGraph: React.FC<RouteGraphProps> = ({ result, allLocations }) 
   const { startLocation, bestRoute } = result;
   const routeSequence = [startLocation, ...bestRoute, startLocation];
 
-  // Helper to get coordinates scaled to SVG viewBox 0..600 0..400
   const scale = (val: number, isY = false) => {
-    // val is 0..100
     if (isY) {
-      return 40 + (val / 100) * 320; // 40..360
+      return 40 + (val / 100) * 320;
     }
-    return 50 + (val / 100) * 500; // 50..550
+    return 50 + (val / 100) * 500;
   };
 
   return (
-    <div className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
+    <div className="pro-card p-6 rounded-2xl border-2 border-pink-200 bg-white shadow-[4px_4px_0px_#F472B6] space-y-4">
       {/* Header controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800/80">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-pink-100">
         <div>
-          <h3 className="text-sm font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2">
-            <Navigation className="w-4 h-4 text-indigo-400" />
+          <h3 className="text-sm font-pixel font-bold uppercase tracking-wider text-pink-950 flex items-center gap-2">
+            <Navigation className="w-4 h-4 text-pink-500" />
             2D Spatial Route Visualization (SVG Canvas)
           </h3>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Nodes represent travel destinations; edges depict Euclidean paths optimized by Genetic Algorithm.
+          <p className="text-xs text-pink-700/80 mt-0.5 font-sans">
+            Nodes represent travel destinations; edges depict Euclidean paths optimized by AI search algorithms.
           </p>
         </div>
 
@@ -44,10 +42,10 @@ export const RouteGraph: React.FC<RouteGraphProps> = ({ result, allLocations }) 
           <button
             type="button"
             onClick={() => setShowAllEdges(!showAllEdges)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all flex items-center gap-1.5 cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-pixel border-2 transition-all flex items-center gap-1.5 cursor-pointer ${
               showAllEdges
-                ? 'bg-indigo-950/80 border-indigo-500/50 text-indigo-300'
-                : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+                ? 'bg-pink-500 border-pink-600 text-white shadow-[2px_2px_0px_#9D174D]'
+                : 'pixel-btn text-pink-700 bg-pink-50 border-pink-300'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
@@ -57,19 +55,17 @@ export const RouteGraph: React.FC<RouteGraphProps> = ({ result, allLocations }) 
       </div>
 
       {/* SVG Canvas Container */}
-      <div className="relative w-full aspect-[16/10] bg-slate-950/90 rounded-xl border border-slate-800/80 overflow-hidden flex items-center justify-center shadow-inner">
-        {/* Subtle grid background */}
+      <div className="relative w-full aspect-[16/10] bg-pink-50/50 rounded-xl border-2 border-pink-200 overflow-hidden flex items-center justify-center shadow-inner">
         <div 
-          className="absolute inset-0 pointer-events-none opacity-20"
+          className="absolute inset-0 pointer-events-none opacity-30"
           style={{
-            backgroundImage: `radial-gradient(#475569 1px, transparent 1px)`,
-            backgroundSize: '24px 24px'
+            backgroundImage: `radial-gradient(#FBCFE8 1.5px, transparent 1.5px)`,
+            backgroundSize: '20px 20px'
           }}
         />
 
         <svg viewBox="0 0 600 400" className="w-full h-full">
           <defs>
-            {/* Arrowhead marker for route path */}
             <marker
               id="arrowhead"
               markerWidth="8"
@@ -78,7 +74,7 @@ export const RouteGraph: React.FC<RouteGraphProps> = ({ result, allLocations }) 
               refY="3"
               orient="auto"
             >
-              <polygon points="0 0, 8 3, 0 6" fill="#6366F1" />
+              <polygon points="0 0, 8 3, 0 6" fill="#EC4899" />
             </marker>
 
             <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
@@ -97,15 +93,15 @@ export const RouteGraph: React.FC<RouteGraphProps> = ({ result, allLocations }) 
                   y1={scale(loc1.y, true)}
                   x2={scale(loc2.x)}
                   y2={scale(loc2.y, true)}
-                  stroke="#334155"
+                  stroke="#FBCFE8"
                   strokeWidth="1"
                   strokeDasharray="3 3"
-                  opacity="0.3"
+                  opacity="0.6"
                 />
               ))
             )}
 
-          {/* 2. Optimized GA Route Line Edges */}
+          {/* 2. Optimized Route Line Edges */}
           {routeSequence.map((loc, idx) => {
             if (idx === routeSequence.length - 1) return null;
             const nextLoc = routeSequence[idx + 1];
@@ -121,25 +117,23 @@ export const RouteGraph: React.FC<RouteGraphProps> = ({ result, allLocations }) 
 
             return (
               <g key={`leg-${idx}`}>
-                {/* Glowing underline */}
                 <line
                   x1={x1}
                   y1={y1}
                   x2={x2}
                   y2={y2}
-                  stroke="#818CF8"
-                  strokeWidth="4"
-                  opacity="0.25"
+                  stroke="#F472B6"
+                  strokeWidth="5"
+                  opacity="0.4"
                   filter="url(#glow)"
                 />
 
-                {/* Animated direction line */}
                 <line
                   x1={x1}
                   y1={y1}
                   x2={x2}
                   y2={y2}
-                  stroke="#6366F1"
+                  stroke="#EC4899"
                   strokeWidth="2.5"
                   markerEnd="url(#arrowhead)"
                   className="animate-dash-line"
@@ -151,19 +145,19 @@ export const RouteGraph: React.FC<RouteGraphProps> = ({ result, allLocations }) 
                   y={midY - 10}
                   width="32"
                   height="18"
-                  rx="6"
-                  fill="#0F172A"
-                  stroke="#334155"
+                  rx="4"
+                  fill="#FFFFFF"
+                  stroke="#F472B6"
                   strokeWidth="1"
                 />
                 <text
                   x={midX}
                   y={midY + 3}
                   textAnchor="middle"
-                  fill="#94A3B8"
+                  fill="#BE185D"
                   fontSize="9"
                   fontFamily="JetBrains Mono"
-                  fontWeight="600"
+                  fontWeight="700"
                 >
                   {legDist}
                 </text>
@@ -185,31 +179,28 @@ export const RouteGraph: React.FC<RouteGraphProps> = ({ result, allLocations }) 
                 onMouseEnter={() => setHoveredNode(loc)}
                 onMouseLeave={() => setHoveredNode(null)}
               >
-                {/* Pulse ring for start node */}
                 {isStart && (
                   <circle
                     cx={cx}
                     cy={cy}
                     r="18"
                     fill="none"
-                    stroke="#10B981"
+                    stroke="#EC4899"
                     strokeWidth="1.5"
                     opacity="0.6"
-                    className="animate-pulse-glow"
+                    className="animate-pulse"
                   />
                 )}
 
-                {/* Outer Glow Circle */}
                 <circle
                   cx={cx}
                   cy={cy}
                   r={isHovered ? 14 : 11}
-                  fill={isStart ? '#10B981' : '#6366F1'}
-                  opacity={isHovered ? 1 : 0.9}
+                  fill={isStart ? '#EC4899' : '#F472B6'}
+                  opacity={isHovered ? 1 : 0.95}
                   filter="url(#glow)"
                 />
 
-                {/* Inner Core */}
                 <circle
                   cx={cx}
                   cy={cy}
@@ -217,15 +208,15 @@ export const RouteGraph: React.FC<RouteGraphProps> = ({ result, allLocations }) 
                   fill="#FFFFFF"
                 />
 
-                {/* Node Label Text */}
                 <text
                   x={cx}
                   y={cy - 16}
                   textAnchor="middle"
-                  fill={isStart ? '#6EE7B7' : '#F1F5F9'}
+                  fill="#831843"
                   fontSize="11"
+                  fontFamily="Pixelify Sans"
                   fontWeight={isStart ? '700' : '600'}
-                  style={{ textShadow: '0 2px 4px rgba(0,0,0,0.9)' }}
+                  style={{ textShadow: '0 1px 2px rgba(255,255,255,0.8)' }}
                 >
                   {loc.name} {isStart ? '(Start)' : ''}
                 </text>
@@ -234,14 +225,13 @@ export const RouteGraph: React.FC<RouteGraphProps> = ({ result, allLocations }) 
           })}
         </svg>
 
-        {/* Floating Tooltip if Node Hovered */}
         {hoveredNode && (
-          <div className="absolute bottom-3 left-3 bg-slate-900/95 border border-slate-700/80 px-3 py-2 rounded-lg shadow-xl text-xs backdrop-blur-md">
-            <div className="font-semibold text-slate-100 flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-indigo-400" />
+          <div className="absolute bottom-3 left-3 bg-white border-2 border-pink-300 px-3.5 py-2 rounded-xl shadow-[3px_3px_0px_#F472B6] text-xs">
+            <div className="font-pixel font-bold text-pink-950 flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-pink-500" />
               {hoveredNode.name}
             </div>
-            <div className="text-[11px] text-slate-400 font-mono mt-0.5">
+            <div className="text-[11px] text-pink-600 font-mono mt-0.5">
               Coordinates: ({hoveredNode.x}, {hoveredNode.y})
             </div>
           </div>
@@ -249,22 +239,22 @@ export const RouteGraph: React.FC<RouteGraphProps> = ({ result, allLocations }) 
       </div>
 
       {/* Graph Legend */}
-      <div className="flex flex-wrap items-center justify-between text-xs text-slate-400 pt-1">
+      <div className="flex flex-wrap items-center justify-between text-xs text-pink-700 font-pixel pt-1">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-emerald-400 inline-block shadow-sm shadow-emerald-400/50" />
+            <span className="w-3 h-3 rounded-full bg-pink-600 inline-block shadow-sm" />
             <span>Origin (Start Node)</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-indigo-500 inline-block shadow-sm shadow-indigo-500/50" />
+            <span className="w-3 h-3 rounded-full bg-pink-400 inline-block shadow-sm" />
             <span>Destination Nodes</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-4 h-0.5 bg-indigo-500 inline-block" />
+            <span className="w-4 h-1 bg-pink-500 inline-block rounded" />
             <span>Optimized Route Traversal</span>
           </div>
         </div>
-        <span className="text-[11px] font-mono text-slate-500">Euclidean Canvas: 600x400</span>
+        <span className="text-[11px] font-mono text-pink-400">Euclidean Canvas: 600x400</span>
       </div>
     </div>
   );

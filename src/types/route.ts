@@ -1,3 +1,5 @@
+export type AlgorithmType = 'astar' | 'ga' | 'greedy' | 'bfs' | 'dfs';
+
 export interface Location {
   id: string;
   name: string;
@@ -9,8 +11,27 @@ export interface Location {
   formattedAddress?: string;
 }
 
+export interface AlgorithmBenchmarkResult {
+  id: AlgorithmType;
+  name: string;
+  shortName: string;
+  category: 'Informed Heuristic Search' | 'Evolutionary Metaheuristic' | 'Greedy Local Search' | 'Uninformed Level Search' | 'Uninformed Depth Search';
+  route: Location[];
+  totalDistance: number;
+  fitnessScore: number;
+  executionTimeMs: number;
+  nodesExpanded: number;
+  optimality: 'Guaranteed Global Optimal' | 'Near-Optimal' | 'Local Optimum Trap' | 'Pruned Optimal';
+  timeComplexity: string;
+  spaceComplexity: string;
+  dataStructure: string;
+  explanation: string;
+  isSelectedBest: boolean;
+  color: string;
+}
+
 export interface CandidateRoute {
-  id: 'candidate_random' | 'candidate_greedy' | 'candidate_ga';
+  id: 'candidate_random' | 'candidate_greedy' | 'candidate_ga' | string;
   title: string;
   strategy: string;
   route: Location[];
@@ -18,6 +39,10 @@ export interface CandidateRoute {
   fitnessScore: number;
   isSelectedBest: boolean;
   explanation: string;
+  algorithmId?: AlgorithmType;
+  executionTimeMs?: number;
+  nodesExpanded?: number;
+  optimality?: string;
 }
 
 export interface Chromosome {
@@ -55,15 +80,22 @@ export interface GAResult {
   executionTimeMs: number;
   chromosomeCount: number;
   config: GAConfig;
+  // Multi-algorithm properties
+  algorithms?: Record<AlgorithmType, AlgorithmBenchmarkResult>;
+  algorithmList?: AlgorithmBenchmarkResult[];
+  winningAlgorithmId?: AlgorithmType;
+  selectedAlgorithmId?: AlgorithmType;
 }
 
 export interface OptimizeRequest {
   start: string;
   destinations: string[];
   config?: Partial<GAConfig>;
+  selectedAlgorithm?: 'all' | AlgorithmType;
 }
 
 export interface OptimizeResponse {
   result: GAResult;
   allLocations: Location[];
 }
+

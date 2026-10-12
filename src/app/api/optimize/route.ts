@@ -1,14 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { geocodeLocationsWithOSM } from '@/lib/distance';
-import { runGeneticAlgorithm } from '@/lib/genetic';
+import { runMultiAlgorithmBenchmark } from '@/lib/benchmark';
 import { OptimizeRequest, OptimizeResponse } from '@/types/route';
 
 export const runtime = 'nodejs';
 
+/**
+ * Health check & API specification
+ */
+export async function GET() {
+  return NextResponse.json({
+    status: 'online',
+    engine: 'Ai-ternary Multi-Algorithm Route Optimizer',
+    supportedAlgorithms: ['astar', 'ga', 'greedy', 'bfs', 'dfs', 'all'],
+    gisProvider: 'OpenStreetMap Nominatim',
+    documentation: 'Send POST with { start: string, destinations: string[], selectedAlgorithm?: string }'
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const body: OptimizeRequest = await req.json();
-    const { start, destinations, config } = body;
+    let body: OptimizeRequest;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid JSON body provided in request.' },
+        { status: 400 }
+      );
+    }
+
+    const { start, destinations, config, selectedAlgorithm } = body;
 
     // Validate inputs
     if (!start || typeof start !== 'string' || start.trim().length === 0) {
@@ -36,25 +58,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 1. Geocode locations via OpenStreetMap Nominatim API
+    // 1. Geocode locations via OpenStreetMap Nominatim API (with local coordinate cache)
     const allLocations = await geocodeLocationsWithOSM(start, cleanDestinations);
     const startLoc = allLocations[0];
     const destLocs = allLocations.slice(1);
 
-    // 2. Execute Genetic Algorithm Optimization
-    const gaResult = runGeneticAlgorithm(startLoc, destLocs, config);
+    // 2. Execute Multi-Algorithm Optimization Benchmark (A*, GA, Greedy, BFS, DFS)
+    const benchmarkResult = runMultiAlgorithmBenchmark(startLoc, destLocs, {
+      config,
+      selectedAlgorithm: selectedAlgorithm || 'all'
+    });
 
     // 3. Construct and return response
     const responseData: OptimizeResponse = {
-      result: gaResult,
+      result: benchmarkResult,
       allLocations
     };
 
     return NextResponse.json(responseData, { status: 200 });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error optimizing route:', error);
     return NextResponse.json(
-      { error: 'Failed to process route optimization request.' },
+      { error: error?.message || 'Failed to process route optimization request.' },
       { status: 500 }
     );
   }
